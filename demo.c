@@ -75,7 +75,7 @@ int main(){
 
     char line[MAX_LINE_LENGTH];
 
-    FILE *filePtr = fopen("MICRODADOS_ENEM_2023.CSV", "r");
+    FILE *filePtr = fopen("arquivo.csv", "r");
 
     if (filePtr == NULL) {
         perror("Error opening file");
@@ -122,7 +122,7 @@ int main(){
         i++;
         char buffer[MAX_LINE_LENGTH];
         strcpy(buffer, line);
-        if(i==446 || i==447 || i==448){
+        if(i==427 || i==428 || i==429){
             printf("Linha %d: %s", i,line);
         }
         char *insc_field = getfield(buffer, 0);
@@ -158,7 +158,7 @@ int main(){
 
         insert_into_leaf(root, inscricao, offset);
         insc_field = NULL;
-        /*if(i==446) break;*/
+        if(i==2000) break;
     }
 
     printf("Numero de linhas: %d\n", i);
