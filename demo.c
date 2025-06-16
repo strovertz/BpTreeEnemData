@@ -9,7 +9,7 @@
 #include <locale.h>
 #include <windows.h>
 
-#define MAX_LINE_LENGTH 8192
+#define MAX_LINE_LENGTH 1024
 #define LINES 3933956
 
 
@@ -22,37 +22,22 @@ bool is_numeric(const char *str) {
     return true;
 }
 
-int parse_nota_redacao(const char *str) {
-    if (str == NULL) return 0;
-
-    while (isspace((unsigned char)*str)) str++;
-
-    if (*str == '\0') return 0;
-    const char *p;
-    for (p = str; *p != '\0'; p++) {
-        if (!isdigit((unsigned char)*p)) return 0;
+int parse_nota_redacao(const char *nota_str) {
+    if (nota_str == NULL || strlen(nota_str) == 0) {
+        return 0;
     }
-
-    return atoi(str);
-}
-
-char* getfield2(char *line, int column) {
-    char *token = strtok(line, ";");
-
-    int i = 0;
-
-    while (token != NULL) {
-        if (i == column) {
-            return token;
+    int i;
+    for (i = 0; nota_str[i] != '\0'; i++) {
+        if (!isdigit((unsigned char)nota_str[i])) {
+            return 0;
         }
-        token = strtok(NULL, ";");
-        i++;
     }
-    return 0;
+
+    return atoi(nota_str);
 }
 
 char* getfield(const char* line, int column) {
-    static char temp[1024];
+    static char buffer[1024];
     int current_col = 0;
     const char* start = line;
     const char* ptr = line;
@@ -61,10 +46,10 @@ char* getfield(const char* line, int column) {
         if (*ptr == ';' || *ptr == '\n') {
             if (current_col == column) {
                 size_t len = ptr - start;
-                if (len >= sizeof(temp)) len = sizeof(temp) - 1;
-                strncpy(temp, start, len);
-                temp[len] = '\0';
-                return temp;
+                if (len >= sizeof(buffer)) len = sizeof(buffer) - 1;
+                strncpy(buffer, start, len);
+                buffer[len] = '\0';
+                return buffer;
             }
             current_col++;
             ptr++;
@@ -75,9 +60,9 @@ char* getfield(const char* line, int column) {
     }
 
     if (current_col == column && *start != '\0') {
-        strncpy(temp, start, sizeof(temp) - 1);
-        temp[sizeof(temp) - 1] = '\0';
-        return temp;
+        strncpy(buffer, start, sizeof(buffer) - 1);
+        buffer[sizeof(buffer) - 1] = '\0';
+        return buffer;
     }
 
     return NULL;
@@ -131,37 +116,32 @@ int main(){
     (tem q ser o valor em numeros da ; pós campo desejado)
     então retorna o campo desejado*/
     while (true) {
-        offset = ftell(filePtr);
+        offset = 0; /*ftell(filePtr);*/
         if (fgets(line, MAX_LINE_LENGTH, filePtr) == NULL) break;
-        line[strcspn(line, "\r\n")] = 0;
+
         i++;
-
-        char buffer[MAX_LINE_LENGTH], buffer2[MAX_LINE_LENGTH];
-        strncpy(buffer, line, MAX_LINE_LENGTH);
-        strncpy(buffer2, line, MAX_LINE_LENGTH);
-
+        char buffer[MAX_LINE_LENGTH];
+        strcpy(buffer, line);
+        if(i==446 || i==447 || i==448){
+            printf("Linha %d: %s", i,line);
+        }
         char *insc_field = getfield(buffer, 0);
+        fflush(stdout);
         if (insc_field == NULL) {
             fprintf(stderr, "Linha %d inválida (sem inscrição)\n", i);
             continue;
         }
-        bool eh_mil = false;
         char *endPtr;
         inscricao = (strtoull(insc_field, &endPtr, 10) % 1000000000);
+        bool eh_mil = false;
 
+        char buffer2[MAX_LINE_LENGTH];
         strcpy(buffer2, line);
+        /* corrigido para o índice correto da nota de redação: 51 */
         char *nota_str = getfield(buffer2, 50);
-        int nota = 0;
-        if (nota_str == NULL) {
-            fprintf(stderr, "Linha %d: campo 50 ausente. Linha original: %s", i, line);
-        }
-        if (nota_str == NULL || strlen(nota_str) == 0 || !isdigit(nota_str[0])) {
-            nota = 0;
-            printf("Linha %d: nota ausente ou inválida, tratado como 0\n", i);
-        } else {
-            nota = atoi(nota_str);
-            printf("Nota Redacao (tratada): %d\n", nota);
-        }
+        int nota = parse_nota_redacao(nota_str);
+
+        printf("Nota Redacao (tratada): %d\n", nota);
 
         if (nota == 1000) {
             eh_mil = true;
@@ -174,8 +154,11 @@ int main(){
             printf("offset: %ld\n", offset);
             printf("Nota Redacao: %d\n", nota);
         }
+       printf("Inscricao: %u, linha %d, offset: %ld\n", inscricao, i, offset);
 
         insert_into_leaf(root, inscricao, offset);
+        insc_field = NULL;
+        /*if(i==446) break;*/
     }
 
     printf("Numero de linhas: %d\n", i);
