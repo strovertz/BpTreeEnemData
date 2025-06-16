@@ -55,7 +55,7 @@ void insert_into_leaf(bptree_node *leaf, uint32_t key, long offset) {
     while (i < leaf->nkeys && leaf->keys[i] < key) {
         i++;
     }
-    /* shift pra direita */
+    /* shifta pra direita */
     int j;
     for (j = leaf->nkeys; j > i; j--) {
         leaf->keys[j] = leaf->keys[j - 1];

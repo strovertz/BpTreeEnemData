@@ -3,7 +3,16 @@
 
 #include <stdint.h>
 
-#define M 4
+/*NAO ESQUECER DE AJUSTA!!!*/
+#define M 128
+
+typedef uint32_t inscricao_t;
+typedef uint16_t nota_t;
+typedef struct base_data_t {
+    inscricao_t inscricao;
+    bool eh_mil;
+    long offset;
+}base_data_t;
 
 typedef struct bptree_node {
     int nkeys;                    /* quantidade atual de chaves no nó */

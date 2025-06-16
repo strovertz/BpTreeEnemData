@@ -3,15 +3,40 @@
 #include <string.h>
 #include <stdbool.h>
 #include <stdint.h>
+#include <ctype.h>
 #include "base.h"
+#include "lista.h"
+#include <locale.h>
+#include <windows.h>
 
-#define MAX_LINE_LENGTH 1024
+#define MAX_LINE_LENGTH 8192
 #define LINES 3933956
 
-typedef uint32_t inscricao_t;
 
+bool is_numeric(const char *str) {
+    if (str == NULL || *str == '\0') return false;
+    int i;
+    for (i = 0; str[i] != '\0'; i++) {
+        if (!isdigit((unsigned char)str[i])) return false;
+    }
+    return true;
+}
 
-char* getfield(char *line, int column) {
+int parse_nota_redacao(const char *str) {
+    if (str == NULL) return 0;
+
+    while (isspace((unsigned char)*str)) str++;
+
+    if (*str == '\0') return 0;
+    const char *p;
+    for (p = str; *p != '\0'; p++) {
+        if (!isdigit((unsigned char)*p)) return 0;
+    }
+
+    return atoi(str);
+}
+
+char* getfield2(char *line, int column) {
     char *token = strtok(line, ";");
 
     int i = 0;
@@ -26,34 +51,44 @@ char* getfield(char *line, int column) {
     return 0;
 }
 
-size_t encode_uleb128 (uint64_t x) {
-    unsigned char buf[10];
-    size_t bytes = 0;
-    do {
-        buf[bytes] = x & 0x7fU;
-        if (x >>= 7) buf[bytes] |= 0x80U;
-        ++bytes;
-    } while (x);
-    return bytes;
-}
+char* getfield(const char* line, int column) {
+    static char temp[1024];
+    int current_col = 0;
+    const char* start = line;
+    const char* ptr = line;
 
-/*
-size_t decode_uleb128 (uint64_t *x) {
-    unsigned char buf;
-    size_t bytes = 0;
-    while (fread(&buf, 1, 1, in)) {
-        if (bytes == 0) *x = 0;
-        *x |= (buf & 0x7fULL) << (7 * bytes++);
-        if (!(buf & 0x80U)) break;
+    while (*ptr && current_col <= column) {
+        if (*ptr == ';' || *ptr == '\n') {
+            if (current_col == column) {
+                size_t len = ptr - start;
+                if (len >= sizeof(temp)) len = sizeof(temp) - 1;
+                strncpy(temp, start, len);
+                temp[len] = '\0';
+                return temp;
+            }
+            current_col++;
+            ptr++;
+            start = ptr;
+        } else {
+            ptr++;
+        }
     }
-    return !!bytes;
+
+    if (current_col == column && *start != '\0') {
+        strncpy(temp, start, sizeof(temp) - 1);
+        temp[sizeof(temp) - 1] = '\0';
+        return temp;
+    }
+
+    return NULL;
 }
-*/
 
 int main(){
 
-    char line[MAX_LINE_LENGTH];
+    SetConsoleOutputCP(CP_UTF8);
+    setlocale(LC_ALL, "");
 
+    char line[MAX_LINE_LENGTH];
 
     FILE *filePtr = fopen("MICRODADOS_ENEM_2023.CSV", "r");
 
@@ -72,21 +107,78 @@ int main(){
     bptree_node *root = create_node(true);
     bptree_node *node = NULL;
 
+    Redacoes *redacoes = NULL;
+    inicializar_lista(&redacoes, 2);
+    if (redacoes == NULL) {
+        fprintf(stderr, "Erro ao inicializar lista de redacoes Nota 1000.\n");
+        fclose(filePtr);
+        return EXIT_FAILURE;
+    }
+
+    if (root == NULL) {
+        fprintf(stderr, "Erro ao criar nó raiz.\n");
+        fclose(filePtr);
+        return EXIT_FAILURE;
+    }
+
     int i=0;
 
     long offset = 0;
 
+    /* Ler linhas do arquivo,
+    envia a struct base_data_t
+    para getfield com o campo que desejar
+    (tem q ser o valor em numeros da ; pós campo desejado)
+    então retorna o campo desejado*/
     while (true) {
         offset = ftell(filePtr);
-        if(fgets(line, MAX_LINE_LENGTH, filePtr) == NULL) break;
+        if (fgets(line, MAX_LINE_LENGTH, filePtr) == NULL) break;
+        line[strcspn(line, "\r\n")] = 0;
+        i++;
 
+        char buffer[MAX_LINE_LENGTH], buffer2[MAX_LINE_LENGTH];
+        strncpy(buffer, line, MAX_LINE_LENGTH);
+        strncpy(buffer2, line, MAX_LINE_LENGTH);
+
+        char *insc_field = getfield(buffer, 0);
+        if (insc_field == NULL) {
+            fprintf(stderr, "Linha %d inválida (sem inscrição)\n", i);
+            continue;
+        }
+        bool eh_mil = false;
         char *endPtr;
-        inscricao = (strtoull(getfield(line, 0), &endPtr, 10) % 1000000000);
-        printf("inscricao: %u\n", inscricao);
-        printf("offset: %ld\n", offset);
+        inscricao = (strtoull(insc_field, &endPtr, 10) % 1000000000);
+
+        strcpy(buffer2, line);
+        char *nota_str = getfield(buffer2, 50);
+        int nota = 0;
+        if (nota_str == NULL) {
+            fprintf(stderr, "Linha %d: campo 50 ausente. Linha original: %s", i, line);
+        }
+        if (nota_str == NULL || strlen(nota_str) == 0 || !isdigit(nota_str[0])) {
+            nota = 0;
+            printf("Linha %d: nota ausente ou inválida, tratado como 0\n", i);
+        } else {
+            nota = atoi(nota_str);
+            printf("Nota Redacao (tratada): %d\n", nota);
+        }
+
+        if (nota == 1000) {
+            eh_mil = true;
+            printf("Redação nota 1000!\n");
+            inserir_no_final(redacoes, (redacao_t){.inscricao = inscricao, .eh_mil = true});
+        }
+
+        if (eh_mil) {
+            printf("inscricao: %u\n", inscricao);
+            printf("offset: %ld\n", offset);
+            printf("Nota Redacao: %d\n", nota);
+        }
+
         insert_into_leaf(root, inscricao, offset);
-        if(++i == 5) break;
     }
+
+    printf("Numero de linhas: %d\n", i);
 
     printf("digita a mtricula que deseja buscar:\n");
 
@@ -108,17 +200,3 @@ int main(){
 
     return 0;
 }
-
-
-/*if (field == 0)
-        {
-            char *endPtr;
-            inscricao = (strtoull(getfield(line, 0), &endPtr, 10) % 1000000000);
-            printf("%u\n", inscricao);
-        } else {
-            char *prtStr = getfield(line, field);
-            printf("%s\n", prtStr);
-        }
-
-        if(inscricao != 0) printf("%llu\n", inscricao);*/
-        /*char *strPtr = strtok(line, ";");*/
