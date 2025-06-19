@@ -24,7 +24,7 @@ Este projeto processa e organiza dados de inscrições do **MICRODADOS_ENEM_2023
 
 # AVISOS
 
-POR FAVOR, PELO AMOR DE DEUS, PLEASE, пожалуйста,  CONVERTER O .CSV PARA UTF-8 ANTES DE EXECUTAR.
+*<b>POR FAVOR, ENCARECIDAMENTE, PLEASE, пожалуйста</b>*,  CONVERTER O .CSV PARA UTF-8 ANTES DE EXECUTAR.
 ``` bash
 iconv -f ISO-8859-1 -t UTF-8 -o arquivo.csv MICRODADOS_ENEM_2023.csv
 ```
