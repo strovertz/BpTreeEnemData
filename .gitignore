@@ -1,2 +1,5 @@
 MICRODADOS_ENEM_2023.csv
 *.csv
+*.exe
+.vscode
+.vscode/*
