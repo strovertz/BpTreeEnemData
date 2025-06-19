@@ -42,7 +42,6 @@ iconv -f ISO-8859-1 -t UTF-8 -o arquivo.csv MICRODADOS_ENEM_2023.csv
 - **bst.h / bst.c**: Implementação da árvore binária de busca para estados e cidades.
 - **base.h / base.c**: Lógica principal para inserir estados, cidades e inscrições.
 - **main.c**: Ponto de entrada com interface para consulta de dados.
-- **Makefile**: Instruções para compilação.
 - **README.md**: Esta documentação.
 
 ### Estrutura dos Dados
