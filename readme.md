@@ -1,3 +1,23 @@
+## Requisitos
+``` text
+Criar um programa que permite algumas buscas de dados na base de dados do ENEM 2023.
+
+No link abaixo você irá encontrar os dados do ENEM 2023:
+https://www.gov.br/inep/pt-br/acesso-a-informacao/dados-abertos/microdados/enem
+
+Seu programa deverá permitir, ao menos, as seguintes buscas de dados.
+- arquivo MICRODADOS_ENEM_2023.csv: procurar uma inscrição específica dada pelo usuário e mostrar dados da mesma; listar inscrições por município de realização da prova+unidade da federação; listar todas as inscrições que tiraram a maior nota na redação.
+
+Fase Bônus: (opcional, mas aumenta a nota final do trabalho)
+Faça um programa capaz de comprimir/descomprimir o arquivo csv utilizando algumas das técnicas vistas. Seu objetivo é conseguir uma taxa de compressão abaixo de 0,30 (para o arquivo MICRODADOS_ENEM_2023.csv o compressor gzip consegue uma taxa de ~0,23)
+
+OBSERVAÇÕES:
+
+- somente serão aceitos programas em C ANSI (gcc -ansi)
+- grupos de, no máximo, 2 alunos
+- NÃO usar pesquisa sequencial simples (somente em casos internos, com poucos elementos, a mesma pode ser usada)
+- Além do(s) programa(s), você deverá entregar um relatório que mostre suas estratégias para os problemas de busca de dados resolvidos em seu programa e, se fizer a parte de compressão, como a mesma foi feita.
+```
 # ENEM Microdados Processor
 
 Este projeto processa e organiza dados de inscrições do **MICRODADOS_ENEM_2023.csv**. Ele estrutura as informações por estados, cidades e inscrições, permitindo buscas eficientes por matrícula, cidade + estado e filtragem por nota na redação.
