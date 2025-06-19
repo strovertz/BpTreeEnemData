@@ -2,6 +2,12 @@
 
 Este projeto processa e organiza dados de inscrições do **MICRODADOS_ENEM_2023.csv**. Ele estrutura as informações por estados, cidades e inscrições, permitindo buscas eficientes por matrícula, cidade + estado e filtragem por nota na redação.
 
+# AVISOS
+
+POR FAVOR, CONVERTER O .CSV PARA UTF-8 ANTES DE EXECUTAR.
+``` bash
+iconv -f ISO-8859-1 -t UTF-8 -o arquivo.csv MICRODADOS_ENEM_2023.csv
+```
 ## Funcionalidades
 
 - Carrega dados de inscrições do ENEM em uma árvore binária de busca organizada por estados e suas cidades.
