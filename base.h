@@ -2,7 +2,7 @@
 #define __BASE_H__
 
 #include <stdint.h>
-
+#include <stdbool.h>
 /*NAO ESQUECER DE AJUSTA!!!*/
 #define M 128
 
@@ -26,5 +26,6 @@ typedef struct bptree_node {
 bptree_node* create_node(bool is_leaf);
 int bptree_search(bptree_node *node, uint32_t key, bptree_node **found_node);
 void insert_into_leaf(bptree_node *leaf, uint32_t key, long offset);
+void liberarBPTree(bptree_node* node);
 
 #endif

@@ -65,3 +65,18 @@ void insert_into_leaf(bptree_node *leaf, uint32_t key, long offset) {
     leaf->offsets[i] = offset;
     leaf->nkeys++;
 }
+
+
+void liberarBPTree(bptree_node* node) {
+    if (node == NULL) return;
+
+    /*libera os filho recursivamente se não for uma folha.*/
+    if (!node->is_leaf) {
+        int i;
+        for (i = 0; i <= node->nkeys; i++) {
+            liberarBPTree(node->children[i]);
+        }
+    }
+
+    free(node);
+}
