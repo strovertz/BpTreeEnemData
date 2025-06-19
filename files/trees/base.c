@@ -1,5 +1,7 @@
 #include <stdlib.h>
 #include <stdbool.h>
+#include <stdint.h>
+#include <string.h>
 #include "base.h"
 
 bptree_node* create_node(bool is_leaf) {

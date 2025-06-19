@@ -15,7 +15,7 @@ void imprimir_linha_do_offset(FILE *arquivo, long offset);
 
 void buscar_por_inscricao(FILE *filePtr, bptree_node *root) {
     unsigned int inscricao;
-    printf("Digite o número de inscrição: ");
+    printf("Digite o número de inscrição DESCONSIDERANDO os 4 primeiros digitos (2100): ");
     scanf("%u", &inscricao);
 
     bptree_node *node;
@@ -231,7 +231,6 @@ int main(){
 
     inscricao_t inscricao;
     bptree_node *root = create_node(true);
-    bptree_node *node = NULL;
     Estados *estados = NULL;
 
     /* TESTES DE INSERÇÃO DOS ESTADOS
