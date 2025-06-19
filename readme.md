@@ -81,24 +81,22 @@ A listagem é feita diretamente exibindo essa lista, evitando percorrer toda a b
    gcc --ansi -Wall main.c ./files/trees/base.c ./files/lists/lista.c ./files/trees/bst.c -o enem_processor
 Execute o programa:
 
-bash
-Copiar
-Editar
+``` bash
 ./enem_processor
+```
+
 Siga o menu para:
 
-Buscar inscrição por matrícula.
+1. Buscar inscrição por matrícula.
 
-Listar inscrições por cidade e estado.
+2. Listar inscrições por cidade e estado.
 
-Mostrar todas as inscrições com nota na redação ≥ 900.
+3. Mostrar todas as inscrições com nota na redação ≥ 900.
 
 Informe os offsets quando solicitado para acessar rapidamente linhas específicas do arquivo.
 
-Exemplo
-diff
-Copiar
-Editar
+<b> *Exemplo* </b>
+
 Digite a sigla do estado (UF): RS
 Digite o nome da cidade: Porto Alegre
 Inscrições para Porto Alegre - RS:
