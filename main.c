@@ -4,9 +4,9 @@
 #include <stdbool.h>
 #include <stdint.h>
 #include <ctype.h>
-#include "base.h"
-#include "lista.h"
-#include "bst.h"
+#include "./files/trees/base.h"
+#include "./files/lists/lista.h"
+#include "./files/trees/bst.h"
 #include <locale.h>
 
 #define MAX_LINE_LENGTH 8192
@@ -234,7 +234,7 @@ int main(){
     bptree_node *node = NULL;
     Estados *estados = NULL;
 
-    /*
+    /* TESTES DE INSERÇÃO DOS ESTADOS
     estados = inserirEstado(estados, "SP");
     estados = inserirEstado(estados, "SC");
     estados = inserirEstado(estados, "MG");
@@ -336,6 +336,7 @@ int main(){
 
     /* MENU DE BUSCA BONITINHO!(OU QUASE;;;)*/
     menu_busca(filePtr, estados, root, redacoes);
+    /* TESTES DE INSERÇÃO DAS REDAÇÕESS E DO ACESSO AO OFFSET */
     /*
     printf("Numero de linhas: %d\n", i);
     printf("Imprimindo Redacoes Nota >= 900");

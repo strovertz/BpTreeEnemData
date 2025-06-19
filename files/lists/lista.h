@@ -1,6 +1,6 @@
 #ifndef __LISTA_H__
 #define __LISTA_H__
-#include "base.h"
+#include "../trees/base.h"
 
 typedef struct redacao_t{
     inscricao_t inscricao;
