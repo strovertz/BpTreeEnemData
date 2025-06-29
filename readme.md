@@ -88,9 +88,9 @@ Siga o menu para:
 
 1. Buscar inscrição por matrícula.
 
-2. Listar inscrições por cidade e estado.
+2. Listar inscrições por cidade e estado. (Realizar busca primeiro inserindo Sigla Estado (Press Enter) e Nome da Cidade (Press Enter))
 
-3. Mostrar todas as inscrições com nota na redação ≥ 900.
+3. Mostrar todas as inscrições com nota na redação = 1000.
 
 Informe os offsets quando solicitado para acessar rapidamente linhas específicas do arquivo.
 
