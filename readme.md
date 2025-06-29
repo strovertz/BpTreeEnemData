@@ -77,7 +77,7 @@ A listagem é feita diretamente exibindo essa lista, evitando percorrer toda a b
 1. Compile o projeto:
 
    ```bash
-   gcc --ansi -Wall main.c ./files/trees/base.c ./files/lists/lista.c ./files/trees/bst.c -o enem_processor
+   gcc --ansi -Wall main.c ./files/utils/utils.c ./files/trees/base.c ./files/lists/lista.c ./files/trees/bst.c -o enem_processor
 Execute o programa:
 
 ``` bash
@@ -101,3 +101,58 @@ Digite o nome da cidade: Porto Alegre
 Inscrições para Porto Alegre - RS:
 - 123456
 - 789012
+
+#Compressão
+
+---
+
+## Algoritmo
+
+Utilizamos o **Run-Length Encoding (RLE)**, que é uma técnica de compressão simples que substitui sequências repetidas de caracteres por um único caractere seguido do número de repetições.
+
+### Vantagens
+
+- Simples e rápida implementação.
+- Funciona bem para dados com muitas repetições consecutivas.
+
+### Limitações
+
+- Pouca compressão em dados com alta entropia (poucas repetições).
+- Melhor performance em dados com padrões repetitivos.
+
+---
+
+## Como Usar
+
+### Compilar
+
+Para compilar o programa compressor e descompressor:
+
+```bash
+gcc -o files/compression/rle files/compression/rle.c files/compression/compressor.c
+```
+
+# 🧵 RLE Decompressor
+
+Este módulo realiza a **descompressão** de arquivos compactados com o algoritmo **Run-Length Encoding (RLE)**.
+Ele reconstrói o conteúdo original a partir de um arquivo `.rle`.
+
+---
+## ⚙️ Como Funciona
+
+A compressão RLE armazena pares de:
+
+- **1 byte para o caractere**
+- **1 byte para a quantidade de repetições consecutivas (0–255)**
+
+A descompressão lê esses pares e reconstrói o conteúdo original, repetindo o caractere conforme o número informado.
+
+---
+
+## 🛠️ Compilação
+
+Compile o decompressor com:
+
+```bash
+gcc -o decompressor decompressor.c
+```

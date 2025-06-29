@@ -219,8 +219,6 @@ void insert_into_internal_after_splitting(bptree_node **root, bptree_node *old_n
     insert_into_parent(root, old_node, k_prime, new_node);
 }
 
-
-
 void liberarBPTree(bptree_node* node) {
     if (node == NULL) return;
 

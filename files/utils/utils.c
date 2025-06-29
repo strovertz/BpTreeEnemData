@@ -15,7 +15,7 @@
 void buscar_por_inscricao(FILE *fp, bptree_node *root) {
     uint64_t chave;
 
-    printf("Digite o número de inscrição DESCONSIDERANDO os 4 primeiros digitos (2100): ");
+    printf("Digite o número da inscrição a ser buscada: ");
 
     scanf("%lu", &chave);
     inscricao_t chave2;
@@ -73,11 +73,11 @@ void buscar_por_cidade_estado(Estados *estados) {
 
 void listar_melhores_redacoes(Redacoes *redacoes) {
     if (redacoes == NULL || redacoes->tamanho == 0) {
-        printf("Nenhuma redação com nota >= 900 encontrada.\n");
+        printf("Nenhuma redação com nota MIL encontrada.\n");
         return;
     }
 
-    printf("Inscrições com nota >= 900 na redação:\n");
+    printf("Inscrições com nota MIL na redação:\n");
     imprimir_lista(redacoes);
 }
 
