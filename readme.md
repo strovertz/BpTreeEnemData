@@ -156,3 +156,7 @@ Compile o decompressor com:
 ```bash
 gcc -o decompressor decompressor.c
 ```
+
+Authors:
+- [Gleison Pires](https://github.com/strovertz/)
+- [Waliston Santos](https://github.com/eu-waliston/)
