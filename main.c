@@ -73,30 +73,16 @@ int main(){
 
         char *endPtr;
         inscricao = (strtoull(insc_field, &endPtr, 10) % 1000000000);
-        bool eh_mil = false;
-
-        /*char buffer2[MAX_LINE_LENGTH];*/
 
         strcpy(buffer, line);
 
         char *nota_str = getfield(buffer, 50);
         int nota = parse_nota_redacao(nota_str);
 
-        printf("Nota Redacao (tratada): %d\n", nota);
-
         /*vamo testar com poucos dados, então finge que +900 = 1000 kkkk*/
         if (nota == 1000) {
-            eh_mil = true;
-            printf("Redação nota 1000!\n");
             inserir_no_final(redacoes, (redacao_t){.inscricao = inscricao, .eh_mil = true});
         }
-
-        if (eh_mil) {
-            printf("inscricao: %u\n", inscricao);
-            printf("offset: %ld\n", offset);
-            printf("Nota Redacao: %d\n", nota);
-        }
-        printf("Inscricao: %u, linha %d, offset: %ld\n", inscricao, i, offset);
 
         /* Trabalha com os dados dos estados e das cidades */
 
@@ -105,7 +91,7 @@ int main(){
         strcpy(buffer, line);
         bptree_node *leaf = NULL;
         bptree_search(root, inscricao, &leaf);
-        insert_into_leaf(&root, leaf ? leaf : root, inscricao, offset);
+        insert_into_leaf(&root, leaf, inscricao, offset);
 
         if(i==100000) break;
     }

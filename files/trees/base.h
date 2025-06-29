@@ -25,6 +25,7 @@ typedef struct bptree_node {
 
 bptree_node* create_node(bool is_leaf);
 int bptree_search(bptree_node *node, uint32_t key, bptree_node **found_node);
+void insert_into_internal_after_splitting(bptree_node **root, bptree_node *old_node, uint32_t key, bptree_node *right);
 void insert_into_leaf(bptree_node **root, bptree_node *leaf, uint32_t key, long offset);
 void insert_into_leaf_after_splitting(bptree_node **root, bptree_node *leaf, uint32_t key, long offset);
 void insert_into_parent(bptree_node **root, bptree_node *left, uint32_t key, bptree_node *right);

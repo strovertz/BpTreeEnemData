@@ -27,7 +27,10 @@ bptree_node* create_node(bool is_leaf) {
 /* Busca recursiva, retorna o nó folha onde a chave deveria estar*/
 /* e a posição dentro do nó (-1 se não encontrou)*/
 int bptree_search(bptree_node *node, uint32_t key, bptree_node **found_node) {
-    if (!node) return -1;
+    if (!node) {
+        *found_node = NULL;
+        return -1;
+    }
 
     int i = 0;
     while (i < node->nkeys && key > node->keys[i]) {
@@ -35,21 +38,22 @@ int bptree_search(bptree_node *node, uint32_t key, bptree_node **found_node) {
     }
 
     if (node->is_leaf) {
-        /* procurar chave no nó folha */
-        int j;
-        for (j = 0; j < node->nkeys; j++) {
-            if (node->keys[j] == key) {
-                *found_node = node;
-                return j;
-            }
-        }
-        *found_node = NULL;
-        return -1;
+    *found_node = node;  // SEMPRE define o nó folha
+    for (int j = 0; j < node->nkeys; j++) {
+        if (node->keys[j] == key)
+            return j;
+    }
+    return -1;
     } else {
-        /* descer para filho adequado*/
-        return bptree_search(node->children[i], key, found_node);
+        if (i <= node->nkeys && node->children[i]) {
+            return bptree_search(node->children[i], key, found_node);
+        } else {
+            *found_node = NULL;
+            return -1;
+        }
     }
 }
+
 
 void insert_into_leaf(bptree_node **root, bptree_node *leaf, uint32_t key, long offset) {
     if (leaf->nkeys < M - 1) {
@@ -151,7 +155,8 @@ void insert_into_parent(bptree_node **root, bptree_node *left, uint32_t key, bpt
     if (parent->nkeys < M - 1) {
         int i = 0;
         while (i < parent->nkeys && parent->keys[i] < key) i++;
-        for (int j = parent->nkeys; j > i; j--) {
+        int j;
+        for ( j = parent->nkeys; j > i; j--) {
             parent->keys[j] = parent->keys[j - 1];
             parent->children[j + 1] = parent->children[j];
         }
@@ -159,9 +164,61 @@ void insert_into_parent(bptree_node **root, bptree_node *left, uint32_t key, bpt
         parent->children[i + 1] = right;
         parent->nkeys++;
     } else {
-        fprintf(stderr, "Split de nó interno ainda não implementado!\n");
+        insert_into_internal_after_splitting(root, parent, key, right);
     }
+
 }
+
+void insert_into_internal_after_splitting(bptree_node **root, bptree_node *old_node, uint32_t key, bptree_node *right) {
+    int i, j;
+    uint32_t temp_keys[M];
+    bptree_node *temp_children[M + 1];
+
+    int insertion_index = 0;
+    while (insertion_index < old_node->nkeys && old_node->keys[insertion_index] < key)
+        insertion_index++;
+
+    for (i = 0, j = 0; i < old_node->nkeys + 1; i++) {
+        if (j == insertion_index + 1) j++;
+        temp_children[j++] = old_node->children[i];
+    }
+
+    for (i = 0, j = 0; i < old_node->nkeys; i++) {
+        if (j == insertion_index) j++;
+        temp_keys[j++] = old_node->keys[i];
+    }
+
+    temp_keys[insertion_index] = key;
+    temp_children[insertion_index + 1] = right;
+
+    int split = M / 2;
+    bptree_node *new_node = create_node(false);
+    if (!new_node) {
+        fprintf(stderr, "Erro ao alocar novo nó interno.\n");
+        return;
+    }
+
+    old_node->nkeys = 0;
+    for (i = 0; i < split; i++) {
+        old_node->keys[i] = temp_keys[i];
+        old_node->children[i] = temp_children[i];
+        old_node->nkeys++;
+    }
+    old_node->children[i] = temp_children[i];
+
+    uint32_t k_prime = temp_keys[split];
+
+    new_node->nkeys = 0;
+    for (++i, j = 0; i < M; i++, j++) {
+        new_node->keys[j] = temp_keys[i];
+        new_node->children[j] = temp_children[i];
+        new_node->nkeys++;
+    }
+    new_node->children[j] = temp_children[i];
+
+    insert_into_parent(root, old_node, k_prime, new_node);
+}
+
 
 
 void liberarBPTree(bptree_node* node) {

@@ -12,26 +12,36 @@
 
 #define MAX_LINE_LENGTH 8192
 
-void buscar_por_inscricao(FILE *filePtr, bptree_node *root) {
-    unsigned int inscricao;
-    printf("Digite o número de inscrição DESCONSIDERANDO os 4 primeiros digitos (2100): ");
-    scanf("%u", &inscricao);
+void buscar_por_inscricao(FILE *fp, bptree_node *root) {
+    uint64_t chave;
 
-    bptree_node *node;
-    if (bptree_search(root, inscricao, &node)) {
-        int i;
-        for (i = 0; i < node->nkeys; i++) {
-            if (node->keys[i] == inscricao) {
-                long offset = node->offsets[i];
-                printf("Inscrição encontrada. Offset: %ld\n", offset);
-                imprimir_linha_do_offset(filePtr, offset);
-                return;
-            }
+    printf("Digite o número de inscrição DESCONSIDERANDO os 4 primeiros digitos (2100): ");
+
+    scanf("%lu", &chave);
+    inscricao_t chave2;
+    printf("Chave digitada: %lu\n", chave);
+    chave2 = chave % 1000000000;
+    printf("Chave reduzida: %u\n", chave2);
+    bptree_node *found_node = NULL;
+    int idx = bptree_search(root, chave2, &found_node);
+
+    if (found_node && idx >= 0) {
+        long offset = found_node->offsets[idx];
+        printf("Inscrição encontrada! Offset: %ld\n", offset);
+        fseek(fp, offset, SEEK_SET);
+
+        char buffer[1024];
+        if (fgets(buffer, sizeof(buffer), fp)) {
+            printf("Linha completa: %s\n", buffer);
+        } else {
+            printf("Erro ao ler a linha no arquivo.\n");
         }
     } else {
-        printf("Inscrição não encontrada.\n");
+        printf("Inscrição %u não encontrada.\n", chave2);
     }
 }
+
+
 void buscar_por_cidade_estado(Estados *estados) {
     char uf[3], cidade[128];
     printf("Digite a sigla do estado (UF): ");
