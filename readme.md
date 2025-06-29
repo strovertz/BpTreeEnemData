@@ -101,7 +101,7 @@ Digite o nome da cidade: Porto Alegre
 Inscrições para Porto Alegre - RS:
 - 123456
 - 789012
--> Ele imprime a inscrição desconsiderando os 4 primeiros digitos.
+-> Ele imprime a inscrição desconsiderando os 4 primeiros digitos comuns entre todos os inscritos.
 
 #Compressão
 
